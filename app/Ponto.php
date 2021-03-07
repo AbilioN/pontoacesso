@@ -72,9 +72,12 @@ class Ponto extends Model
     {
         $ponto = self::find($pausaEncerrada->ponto_id);
         $nroPausas = $ponto->nro_pausas;
-        $ponto->nro_pausas = $nroPausas++;
+        $ponto->nro_pausas = $nroPausas + 1;
+
+        $parcialTrabalhado = self::calcularParcialTrabalhado($pausaEncerrada->fim, $ponto);
+        // $ponto->total_trabalhado = 
         if($ponto->save()){
-            return $ponto;
+            return [$ponto, $parcialTrabalhado];
         }
         return null;
     }
@@ -89,21 +92,32 @@ class Ponto extends Model
             )->get();
 
         
-        foreach($pausaIniciada as $pausa){
-            $inicio = $pausa->inicio;
-            $fim = $pausa->fim;
+        // foreach($pausaIniciada as $pausa){
+        //     $inicio = $pausa->inicio;
+        //     $fim = $pausa->fim;
 
-            $fim = Carbon::parse($fim);
-            $horaInicial = Carbon::parse($inicio);
+        //     $fim = Carbon::parse($fim);
+        //     $horaInicial = Carbon::parse($inicio);
             
-            $parcialTrabalhado = $agora->diff($horaInicial);
-            $parcialTrabalhado = $parcialTrabalhado->format('%h:%i:%s');
+        //     $parcialTrabalhado = $agora->diff($horaInicial);
+        //     $parcialTrabalhado = $parcialTrabalhado->format('%h:%i:%s');
 
-        }
+        // }
+
+
+
+    }
+
+    public static function calcularParcialTrabalhado($agora, $ponto)
+    {
+        
+        $totalDeHoras = 8;
         $agora = Carbon::parse($agora);
         $horaInicial = Carbon::parse($ponto->inicio);
         
         $parcialTrabalhado = $agora->diff($horaInicial);
         $parcialTrabalhado = $parcialTrabalhado->format('%h:%i:%s');
+
+        return $parcialTrabalhado;
     }
 }

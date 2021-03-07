@@ -35,6 +35,7 @@ class Pausa extends Model
             $pausa = new self();
         }
 
+        // dd($agora);
         $pausa->ponto_id = $novaPausa['ponto_id'];
         $pausa->inicio = $agora;
         $pausa->descricao = $novaPausa['descricao'];    
