@@ -28,6 +28,7 @@ class PontoController extends Controller
 
             $trabalhoIniciado = Ponto::verificarOuIniciarPonto($ponto);
 
+            
             if($trabalhoIniciado){
                 return response()->json([
                     'success' => 'Ponto iniciado, Bom trabalho!',

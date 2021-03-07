@@ -14,10 +14,9 @@ class Pausa extends Model
     public $timestamps = false;
     
 
-    public static function verificarOuIniciarPausa($novaPausa)
+    public static function verificarOuIniciarPausa($novaPausa , $agora)
     {
         
-       $agora = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
         $pausaIniciada = self::where([
             'ponto_id' => $novaPausa['ponto_id'],
             'ativo' => true,

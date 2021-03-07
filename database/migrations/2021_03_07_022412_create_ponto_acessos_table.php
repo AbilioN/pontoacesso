@@ -16,10 +16,11 @@ class CreatePontoAcessosTable extends Migration
         Schema::create('pontos', function (Blueprint $table) {
 
             $table->bigIncrements('id');
-            $table->date('inicio');
-            $table->date('fim')->nullable();
+            $table->dateTime('inicio');
+            $table->dateTime('fim')->nullable();
             $table->integer('nro_pausas')->nullable();
             $table->boolean('ativo');
+            $table->dateTime('total_trabalhado')->nullable();
             $table->timestamps();
         });
     }
