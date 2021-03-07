@@ -20,6 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login' , 'AuthController@login')->name('login');
 
 Route::group(['middleware' => ['apiJwt'] ], function(){
-Route::get('users' , 'UserController@listUsers')->name('users.list');
+    Route::get('users' , 'UserController@listUsers')->name('users.list');
+    Route::post('pontos/iniciar' , 'PontoController@iniciarPonto')->name('pontos.iniciar');
+
 
 });

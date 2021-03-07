@@ -8,6 +8,6 @@ class UserController extends Controller
 {
     public function listUsers(Request $request)
     {
-        dd('aqui');
+        
     }
 }
