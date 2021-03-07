@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\PontoAcesso;
+use App\Ponto;
 use Carbon\Carbon;
 use DateTimeZone;
 use Exception;
@@ -16,10 +16,8 @@ class PontoController extends Controller
     {
 
         try{
-            // por datetimezone e formar em configuracao global
             $now = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
-
-            $ponto = new PontoAcesso();
+            $ponto = new Ponto();
 
             $user = Auth::user();
 
@@ -28,10 +26,13 @@ class PontoController extends Controller
             $ponto->user_id = $user->id;
             $ponto->ativo = true;
 
-            $trabalhoIniciado = PontoAcesso::verificarOuIniciarPonto($ponto);
+            $trabalhoIniciado = Ponto::verificarOuIniciarPonto($ponto);
 
             if($trabalhoIniciado){
-                return response()->json(['success' => 'Ponto iniciado, Bom trabalho!'] , 200);
+                return response()->json([
+                    'success' => 'Ponto iniciado, Bom trabalho!',
+                    'ponto_id' => $trabalhoIniciado->id
+                    ] , 200);
             }else{
                 $mensagem = 'Erro ao iniciar seu ponto , tente novamente';
                 throw new Exception($mensagem);

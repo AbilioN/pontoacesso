@@ -13,10 +13,9 @@ class CreatePontoAcessosTable extends Migration
      */
     public function up()
     {
-        Schema::create('ponto_acessos', function (Blueprint $table) {
+        Schema::create('pontos', function (Blueprint $table) {
 
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
             $table->date('inicio');
             $table->date('fim')->nullable();
             $table->integer('nro_pausas')->nullable();
