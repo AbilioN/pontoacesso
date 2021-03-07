@@ -39,4 +39,36 @@ class PausaController extends Controller
         }
   
     }
+
+    public function terminarPausa(Request $request)
+    {
+        DB::beginTransaction();
+        try{
+
+            $agora = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
+
+            $pausaId = $request->pausa_id;
+    
+            $pausaEncerrada = Pausa::terminarPausa($pausaId, $agora);
+
+            $pontoAtualizado = Ponto::atualizarPonto($pausaEncerrada);
+
+            // $tempoRestante = Ponto::calcularTempoRestante($agora, $pontoAtualizado, $pausaEncerrada);
+
+            if($pausaEncerrada && $pontoAtualizado){
+                DB::commit();
+
+                return response()->json([
+                    'sucesso' => 'vem vindo de volta, bom trabalho!'
+                ], 200);
+            }
+
+        }catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['erro' => $e->getMessage()] ,404);
+
+        }
+  
+    }
 }

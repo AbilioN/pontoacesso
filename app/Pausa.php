@@ -35,12 +35,23 @@ class Pausa extends Model
             $pausa = new self();
         }
 
-        // $ponto = Ponto::find($novaPausa['ponto_id']);
-
         $pausa->ponto_id = $novaPausa['ponto_id'];
         $pausa->inicio = $agora;
         $pausa->descricao = $novaPausa['descricao'];    
         $pausa->ativo = true;
+
+        if($pausa->save()){
+            return $pausa;
+        }
+        return null;
+    }
+
+    public static function terminarPausa($pausaId , $agora)
+    {
+
+        $pausa = self::find($pausaId);
+        $pausa->fim = $agora;
+        $pausa->ativo = false;
 
         if($pausa->save()){
             return $pausa;
