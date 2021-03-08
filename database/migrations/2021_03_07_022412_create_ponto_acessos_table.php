@@ -18,10 +18,11 @@ class CreatePontoAcessosTable extends Migration
             $table->bigIncrements('id');
             $table->time('inicio');
             $table->time('fim')->nullable();
+            $table->time('total_trabalhado')->nullable();
             $table->integer('nro_pausas')->nullable();
             $table->boolean('ativo');
-            $table->time('total_trabalhado')->nullable();
             $table->timestamps();
+
         });
     }
 

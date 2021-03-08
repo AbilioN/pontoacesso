@@ -21,7 +21,8 @@ Route::post('login' , 'AuthController@login')->name('login');
 
 Route::group(['middleware' => ['apiJwt'] ], function(){
     Route::get('users' , 'UserController@listUsers')->name('users.list');
-    Route::post('pontos/iniciar' , 'PontoController@iniciarPonto')->name('pontos.iniciar');
+    Route::post('ponto/iniciar' , 'PontoController@iniciarPonto')->name('pontos.iniciar');
+    Route::post('ponto/terminar' , 'PontoController@terminarPonto')->name('pontos.terminar');
     Route::post('pausa/iniciar' , 'PausaController@iniciarPausa')->name('pausa.iniciar');
     Route::post('pausa/terminar' , 'PausaController@terminarPausa')->name('pausa.terminar');
 });

@@ -16,16 +16,28 @@ class PausaController extends Controller
     {
         DB::beginTransaction();
         try{
-            $hoje = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
+
+            $hoje = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d');
+
             $agora = Carbon::now(new DateTimeZone('America/Recife'))->format('h:i:s');
 
+            $requestData = $request->all();
+            $pausaIniciada = Pausa::verificarOuIniciarPausa($requestData , $hoje, $agora);
 
-            $data = $request->all();
 
-            $pausaIniciada = Pausa::verificarOuIniciarPausa($data , $hoje);
+            $ponto = Ponto::find($requestData['ponto_id']);
 
-            $parcialTrabalhadoHoje = Ponto::calcularTotalParcial($data['ponto_id'], $hoje , $pausaIniciada);
-            if($pausaIniciada)
+            $parcialTrabalhadoHoje = Ponto::calcularDiferenca($ponto->inicio ,$pausaIniciada->inicio);
+
+            if($ponto->total_trabalhado){
+                $ponto->total_trabalhado = Ponto::adicionarHoras($ponto->total_trabalhado ,  $parcialTrabalhadoHoje);
+            }else{
+                $ponto->total_trabalhado = $parcialTrabalhadoHoje;
+            }
+
+            $pontoSalvo = $ponto->save();
+
+            if($pausaIniciada && $pontoSalvo)
             {
                 DB::commit();
                 return response()->json([ 
@@ -48,28 +60,24 @@ class PausaController extends Controller
         DB::beginTransaction();
         try{
 
-            $agora = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
+            $hoje = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d H:i');
+            $agora = Carbon::now(new DateTimeZone('America/Recife'))->format('h:i:s');
 
             $pausaId = $request->pausa_id;
             $pausaEncerrada = Pausa::terminarPausa($pausaId, $agora);
-
-            // list($pontoAtualizado, $tempoTrabalhado) = Ponto::atualizarPonto($pausaEncerrada);
-
-            $pontoAtualizado = true;
-            // dd($pontoAtualizado);
-            // $tempoRestante = Ponto::calcularTempoRestante($agora, $pontoAtualizado, $pausaEncerrada);
-
+            $pontoAtualizado = Ponto::atualizarPonto($pausaEncerrada);
             if($pausaEncerrada && $pontoAtualizado){
                 DB::commit();
-
                 return response()->json([
                     'sucesso' => 'Bem vindo de volta, bom trabalho!',
-                    'tempo_trabalhado' => $tempoTrabalhado
+                    'tempo_trabalhado' => $pontoAtualizado->total_trabalhado,
+                    'ativo' => $pontoAtualizado->ativo
                 ], 200);
             }
 
         }catch(Exception $e)
         {
+
             DB::rollBack();
             return response()->json(['erro' => $e->getMessage()] ,404);
 

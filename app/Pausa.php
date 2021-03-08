@@ -14,14 +14,14 @@ class Pausa extends Model
     public $timestamps = false;
     
 
-    public static function verificarOuIniciarPausa($novaPausa , $agora)
+    public static function verificarOuIniciarPausa($novaPausa , $hoje , $agora)
     {
         
         $pausaIniciada = self::where([
             'ponto_id' => $novaPausa['ponto_id'],
             'ativo' => true,
             ])->where(
-                'inicio','>=',Carbon::today()
+                'inicio','>=',$hoje
             )->get()->first();
 
           
@@ -35,7 +35,6 @@ class Pausa extends Model
             $pausa = new self();
         }
 
-        // dd($agora);
         $pausa->ponto_id = $novaPausa['ponto_id'];
         $pausa->inicio = $agora;
         $pausa->descricao = $novaPausa['descricao'];    
@@ -51,6 +50,7 @@ class Pausa extends Model
     {
 
         $pausa = self::find($pausaId);
+
         $pausa->fim = $agora;
         $pausa->ativo = false;
 

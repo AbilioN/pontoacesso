@@ -15,10 +15,12 @@ class CreatePausasTable extends Migration
     {
         Schema::create('pausas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('inicio');
-            $table->date('fim')->nullable();
+            $table->time('inicio');
+            $table->time('fim')->nullable();
             $table->string('descricao');
             $table->boolean('ativo');
+            $table->timestamps();
+
            
         });
     }
