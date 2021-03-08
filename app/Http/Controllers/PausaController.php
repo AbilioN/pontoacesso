@@ -24,12 +24,11 @@ class PausaController extends Controller
             $requestData = $request->all();
             $pausaIniciada = Pausa::verificarOuIniciarPausa($requestData , $hoje, $agora);
 
+        
 
             $ponto = Ponto::find($requestData['ponto_id']);
-
-            $parcialTrabalhadoHoje = Ponto::calcularDiferenca($ponto->inicio ,$pausaIniciada->inicio);
-
-            if($ponto->total_trabalhado){
+            $parcialTrabalhadoHoje = Ponto::calcularDiferenca($ponto->inicio ,$pausaIniciada->inicio , $pausaIniciada);
+            if($ponto->nro_pausas >= 1){
                 $ponto->total_trabalhado = Ponto::adicionarHoras($ponto->total_trabalhado ,  $parcialTrabalhadoHoje);
             }else{
                 $ponto->total_trabalhado = $parcialTrabalhadoHoje;

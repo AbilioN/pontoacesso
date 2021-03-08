@@ -3,11 +3,18 @@
 namespace App;
 
 use Carbon\Carbon;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 
 class Ponto extends Model
 {
     //
+
+    public function pausas()
+    {
+        return $this->hasMany(Pausa::class);
+    }
 
     public static function verificarOuIniciarPonto($ponto)
     {
@@ -36,12 +43,28 @@ class Ponto extends Model
         return null;
     }
 
-    public static function calcularDiferenca($inicio , $fim)
+    public static function calcularDiferenca($inicio , $fim , $verificarPausas = null)
     {
 
         $inicio = Carbon::parse($inicio);
         $fim = Carbon::parse($fim);
 
+        if($verificarPausas)
+        {
+
+            $hoje = Carbon::now(new DateTimeZone('America/Recife'))->format('Y-m-d');
+
+            $ultimaPausa = Pausa::where([
+                'ponto_id' => $verificarPausas->ponto_id,
+                'ativo' => false,
+                ])->where(
+                    'inicio','>=',$hoje
+                )->get()->last();
+            if($ultimaPausa){
+                $inicio = $ultimaPausa->fim;
+
+            }
+        }
         $parcialTrabalhado = $fim->diff($inicio);
         $parcialTrabalhado = $parcialTrabalhado->format('%h:%i:%s');
 
@@ -50,11 +73,10 @@ class Ponto extends Model
     }
     
     public static function adicionarHoras($atual, $mais)
+
     {
         $atual = Carbon::parse($atual);
         $mais = Carbon::parse($mais);
-
-        
         $atual = $atual->addHours($mais);
         $atual = $atual->format('H:i:s');
 
