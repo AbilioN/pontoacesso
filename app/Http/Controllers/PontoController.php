@@ -62,8 +62,7 @@ class PontoController extends Controller
             $user = Auth::user();
 
             $pontoId = $request->ponto_id;
-            
-            
+        
             $pontoEncerrado = Ponto::encerrarPonto($pontoId, $agora);
 
             $tempoTrabalhado = Ponto::calcularDiferenca($pontoEncerrado->inicio, $pontoEncerrado->fim);
@@ -75,13 +74,12 @@ class PontoController extends Controller
 
                     'success' => 'Ponto encerrado, Bom descanso!',
                     'ponto_id' => $pontoEncerrado->id,
-                    'ativo' => $pontoEncerrado->ativo
+                    'ativo' => $pontoEncerrado->ativo,
+                    'total_trabalhado' => $pontoEncerrado->total_trabalhado
 
                     ] , 200);
 
             }
-
-
 
         }catch(Exception $e)
         {
